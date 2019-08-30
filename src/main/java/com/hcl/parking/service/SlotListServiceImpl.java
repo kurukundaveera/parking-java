@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,8 +31,6 @@ public class SlotListServiceImpl implements SlotListService {
 		LocalDate availableDate = LocalDate.now();
 
 		List<ParkingAllocation> parkingAllocationList = parkingAllocationRepository.findAll();
-
-		//parkingAllocationList.stream().filter(s -> s == null).collect(Collectors.toList());
 
 		for (ParkingAllocation parkingAllocation : parkingAllocationList) {
 			slotDTO = new SlotListDTO();
