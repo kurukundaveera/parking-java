@@ -9,5 +9,6 @@ import com.hcl.parking.entity.Parking;
 public interface ParkingRepository extends JpaRepository<Parking, Integer> {
 	
 	List<Parking> findByUserId(Integer userid);
+	Parking getByUserId(Integer userId);
 
 }

@@ -29,6 +29,9 @@ import com.hcl.parking.repository.RoleRepository;
 import com.hcl.parking.repository.UserRepository;
 import com.hcl.parking.util.ParkingConstants;
 
+/**
+ * @author Lakshmi
+ */
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -46,6 +49,12 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	RoleRepository roleRepository;
 
+	/**
+	 * This method is intended for registration of the user
+	 * 
+	 * @param UserDto
+	 * @return UserDetailsDto
+	 */
 	public UserDetailsDto register(UserDto userDto) {
 		LOGGER.debug("UserServiceImpl register()");
 		User user = userRepository.findByEmail(userDto.getEmail());
@@ -86,12 +95,17 @@ public class UserServiceImpl implements UserService {
 		return userDetailsDto;
 	}
 
+	/**
+	 * This method is intended for login of the user
+	 * 
+	 * @param LoginDto
+	 * @return LoginDetailsDto
+	 */
 	public LoginDetailsDto login(LoginDto loginDto) {
 		LOGGER.debug("UserServiceImpl login()");
 		LoginDetailsDto loginResponseDto = null;
 		Base64.Encoder encoder = Base64.getEncoder();
 		String password = encoder.encodeToString(loginDto.getPassword().getBytes());
-
 		List<User> users = userRepository.findByemailAndPassword(loginDto.getEmail(), password);
 		if (users.isEmpty()) {
 			loginResponseDto = new LoginDetailsDto();
@@ -105,6 +119,7 @@ public class UserServiceImpl implements UserService {
 
 			loginResponseDto = new LoginDetailsDto();
 			loginResponseDto.setUserId(user.getUserId());
+			loginResponseDto.setUserName(user.getUserName());
 			loginResponseDto.setRoleType(role.get().getRoleType());
 			loginResponseDto.setStatusCode(200);
 			loginResponseDto.setMessage(ParkingConstants.LOGIN_SUCCESS);
@@ -120,10 +135,32 @@ public class UserServiceImpl implements UserService {
 
 	}
 
+	/**
+	 * This method is intended for request slot of the user
+	 * 
+	 * @param SlotRequestDto
+	 * @return SlotDetailsDto
+	 */
 	public SlotDetailsDto slotRequest(SlotRequestDto slotRequestDto) {
+		LOGGER.debug("UserServiceImpl slotRequest()");
 		ParkingRequest parkingRequest = new ParkingRequest();
-		BeanUtils.copyProperties(slotRequestDto, parkingRequest);
-		parkingRequest.setStatus("pending");
-		return null;
+		SlotDetailsDto slotDetailsDto = new SlotDetailsDto();
+		List<ParkingRequest> parRequest = parkingRequestRepository.findByUserId(slotRequestDto.getUserId());
+		if (slotRequestDto.getRequestedDate().equals(LocalDate.now())) {
+			throw new ParkingSlotException(ParkingConstants.SLOT_REQUEST);
+		} else {
+			if (parRequest.isEmpty()) {
+				BeanUtils.copyProperties(slotRequestDto, parkingRequest);
+				parkingRequest.setStatus(ParkingConstants.PENDING);
+				parkingRequestRepository.save(parkingRequest);
+				slotDetailsDto.setStatusCode(201);
+				slotDetailsDto.setMessage(ParkingConstants.SLOT_REQUEST_SUCCESS);
+
+			} else {
+				throw new ParkingSlotException(ParkingConstants.SLOT_REQUEST_USER_ALREADY);
+			}
+		}
+
+		return slotDetailsDto;
 	}
 }
