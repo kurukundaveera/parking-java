@@ -1,5 +1,6 @@
 package com.hcl.parking.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
@@ -20,7 +21,7 @@ public class ParkingAllocation {
 	private Integer parkingAllocationId;
 	private Integer parkingId;
 	private Integer userId;
-	private LocalDateTime availableDate;
+	private LocalDate availableDate;
 	private LocalDateTime bookedDate;
 
 }

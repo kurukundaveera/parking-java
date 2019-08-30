@@ -19,5 +19,5 @@ public class ParkingRequest {
 	private Integer parkingRequestId;
 	private Integer userId;
 	private LocalDate requestedDate;
-	private Integer status;
+	private String status;
 }
