@@ -29,6 +29,9 @@ import com.hcl.parking.repository.RoleRepository;
 import com.hcl.parking.repository.UserRepository;
 import com.hcl.parking.util.ParkingConstants;
 
+/**
+ * @author Lakshmi
+ */
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -46,6 +49,12 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	RoleRepository roleRepository;
 
+	/**
+	 * This method is intended for registration of the user
+	 * 
+	 * @param UserDto
+	 * @return UserDetailsDto
+	 */
 	public UserDetailsDto register(UserDto userDto) {
 		LOGGER.debug("UserServiceImpl register()");
 		User user = userRepository.findByEmail(userDto.getEmail());
@@ -86,6 +95,12 @@ public class UserServiceImpl implements UserService {
 		return userDetailsDto;
 	}
 
+	/**
+	 * This method is intended for login of the user
+	 * 
+	 * @param LoginDto
+	 * @return LoginDetailsDto
+	 */
 	public LoginDetailsDto login(LoginDto loginDto) {
 		LOGGER.debug("UserServiceImpl login()");
 		LoginDetailsDto loginResponseDto = null;
@@ -120,7 +135,14 @@ public class UserServiceImpl implements UserService {
 
 	}
 
+	/**
+	 * This method is intended for request slot of the user
+	 * 
+	 * @param SlotRequestDto
+	 * @return SlotDetailsDto
+	 */
 	public SlotDetailsDto slotRequest(SlotRequestDto slotRequestDto) {
+		LOGGER.debug("UserServiceImpl slotRequest()");
 		ParkingRequest parkingRequest = new ParkingRequest();
 		SlotDetailsDto slotDetailsDto = new SlotDetailsDto();
 		List<ParkingRequest> parRequest = parkingRequestRepository.findByUserId(slotRequestDto.getUserId());
@@ -131,7 +153,7 @@ public class UserServiceImpl implements UserService {
 				BeanUtils.copyProperties(slotRequestDto, parkingRequest);
 				parkingRequest.setStatus(ParkingConstants.PENDING);
 				parkingRequestRepository.save(parkingRequest);
-				slotDetailsDto.setStatusCode(200);
+				slotDetailsDto.setStatusCode(201);
 				slotDetailsDto.setMessage(ParkingConstants.SLOT_REQUEST_SUCCESS);
 
 			} else {
