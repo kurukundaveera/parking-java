@@ -12,7 +12,7 @@ import com.hcl.parking.entity.ParkingAllocation;
 public interface ParkingAllocationRepository extends JpaRepository<ParkingAllocation, Integer> {
 
 	public List<ParkingAllocation> findByUserIdAndAvailableDate(Integer userId, LocalDate dates);
-	
-	
+
+	List<ParkingAllocation> findByParkingIdAndAvailableDate(Integer parkingid, LocalDate availableDate);
 
 }
