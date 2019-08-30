@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	ParkingRepository parkingRepository;
-	
+
 	@Autowired
 	ParkingRequestRepository parkingRequestRepository;
 
@@ -91,7 +91,7 @@ public class UserServiceImpl implements UserService {
 		LoginDetailsDto loginResponseDto = null;
 		Base64.Encoder encoder = Base64.getEncoder();
 		String password = encoder.encodeToString(loginDto.getPassword().getBytes());
-        System.out.println("password"+password);
+
 		List<User> users = userRepository.findByemailAndPassword(loginDto.getEmail(), password);
 		if (users.isEmpty()) {
 			loginResponseDto = new LoginDetailsDto();
@@ -100,15 +100,15 @@ public class UserServiceImpl implements UserService {
 		} else {
 			User user = users.get(0);
 			Optional<Role> role = roleRepository.findById(user.getRoleId());
-			if(!role.isPresent())
+			if (!role.isPresent())
 				throw new ParkingSlotException(ParkingConstants.ROLE);
-				
+
 			loginResponseDto = new LoginDetailsDto();
 			loginResponseDto.setUserId(user.getUserId());
 			loginResponseDto.setRoleType(role.get().getRoleType());
 			loginResponseDto.setStatusCode(200);
 			loginResponseDto.setMessage(ParkingConstants.LOGIN_SUCCESS);
-			
+
 		}
 		return loginResponseDto;
 	}
