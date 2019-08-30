@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	ParkingRepository parkingRepository;
-	
+
 	@Autowired
 	ParkingRequestRepository parkingRequestRepository;
 
@@ -91,7 +91,6 @@ public class UserServiceImpl implements UserService {
 		LoginDetailsDto loginResponseDto = null;
 		Base64.Encoder encoder = Base64.getEncoder();
 		String password = encoder.encodeToString(loginDto.getPassword().getBytes());
-        System.out.println("password"+password);
 		List<User> users = userRepository.findByemailAndPassword(loginDto.getEmail(), password);
 		if (users.isEmpty()) {
 			loginResponseDto = new LoginDetailsDto();
@@ -100,15 +99,16 @@ public class UserServiceImpl implements UserService {
 		} else {
 			User user = users.get(0);
 			Optional<Role> role = roleRepository.findById(user.getRoleId());
-			if(!role.isPresent())
+			if (!role.isPresent())
 				throw new ParkingSlotException(ParkingConstants.ROLE);
-				
+
 			loginResponseDto = new LoginDetailsDto();
 			loginResponseDto.setUserId(user.getUserId());
+			loginResponseDto.setUserName(user.getUserName());
 			loginResponseDto.setRoleType(role.get().getRoleType());
 			loginResponseDto.setStatusCode(200);
 			loginResponseDto.setMessage(ParkingConstants.LOGIN_SUCCESS);
-			
+
 		}
 		return loginResponseDto;
 	}
@@ -122,8 +122,23 @@ public class UserServiceImpl implements UserService {
 
 	public SlotDetailsDto slotRequest(SlotRequestDto slotRequestDto) {
 		ParkingRequest parkingRequest = new ParkingRequest();
-		BeanUtils.copyProperties(slotRequestDto, parkingRequest);
-		parkingRequest.setStatus("pending");
-		return null;
+		SlotDetailsDto slotDetailsDto = new SlotDetailsDto();
+		List<ParkingRequest> parRequest = parkingRequestRepository.findByUserId(slotRequestDto.getUserId());
+		if (slotRequestDto.getRequestedDate().equals(LocalDate.now())) {
+			throw new ParkingSlotException(ParkingConstants.SLOT_REQUEST);
+		} else {
+			if (parRequest.isEmpty()) {
+				BeanUtils.copyProperties(slotRequestDto, parkingRequest);
+				parkingRequest.setStatus(ParkingConstants.PENDING);
+				parkingRequestRepository.save(parkingRequest);
+				slotDetailsDto.setStatusCode(200);
+				slotDetailsDto.setMessage(ParkingConstants.SLOT_REQUEST_SUCCESS);
+
+			} else {
+				throw new ParkingSlotException(ParkingConstants.SLOT_REQUEST_USER_ALREADY);
+			}
+		}
+
+		return slotDetailsDto;
 	}
 }
