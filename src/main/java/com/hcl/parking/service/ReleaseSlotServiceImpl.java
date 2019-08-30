@@ -59,6 +59,7 @@ public class ReleaseSlotServiceImpl implements ReleaseSlotService {
 		List<ParkingAllocation> parkingAllocationList = new ArrayList<>();
 
 		for (LocalDate freeDate : freeDates) {
+			
 			ParkingAllocation parkingAllocation = new ParkingAllocation();
 			parkingAllocation.setAvailableDate(freeDate);
 			parkingAllocation.setParkingId(parkings.get(0).getParkingId());
