@@ -8,5 +8,6 @@ public class ParkingConstants {
 	public static final String SUCCESS_EMPLOYEE = "Reggistered successfully";
 	public static final String LOGIN_SUCCESS = "Logged in Successfully";
 	public static final String LOGIN_FAILURE = "Login failure";
+	public static final String ROLE = "Role is not present";
 
 }
