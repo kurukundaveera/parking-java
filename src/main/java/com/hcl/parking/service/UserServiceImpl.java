@@ -14,13 +14,17 @@ import org.springframework.stereotype.Service;
 
 import com.hcl.parking.dto.LoginDetailsDto;
 import com.hcl.parking.dto.LoginDto;
+import com.hcl.parking.dto.SlotDetailsDto;
+import com.hcl.parking.dto.SlotRequestDto;
 import com.hcl.parking.dto.UserDetailsDto;
 import com.hcl.parking.dto.UserDto;
 import com.hcl.parking.entity.Parking;
+import com.hcl.parking.entity.ParkingRequest;
 import com.hcl.parking.entity.Role;
 import com.hcl.parking.entity.User;
 import com.hcl.parking.exception.ParkingSlotException;
 import com.hcl.parking.repository.ParkingRepository;
+import com.hcl.parking.repository.ParkingRequestRepository;
 import com.hcl.parking.repository.RoleRepository;
 import com.hcl.parking.repository.UserRepository;
 import com.hcl.parking.util.ParkingConstants;
@@ -35,6 +39,9 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	ParkingRepository parkingRepository;
+	
+	@Autowired
+	ParkingRequestRepository parkingRequestRepository;
 
 	@Autowired
 	RoleRepository roleRepository;
@@ -93,6 +100,9 @@ public class UserServiceImpl implements UserService {
 		} else {
 			User user = users.get(0);
 			Optional<Role> role = roleRepository.findById(user.getRoleId());
+			if(!role.isPresent())
+				throw new ParkingSlotException(ParkingConstants.ROLE);
+				
 			loginResponseDto = new LoginDetailsDto();
 			loginResponseDto.setUserId(user.getUserId());
 			loginResponseDto.setRoleType(role.get().getRoleType());
@@ -108,5 +118,12 @@ public class UserServiceImpl implements UserService {
 		Period p = Period.between(birthDate, todayDate);
 		return p.getYears();
 
+	}
+
+	public SlotDetailsDto slotRequest(SlotRequestDto slotRequestDto) {
+		ParkingRequest parkingRequest = new ParkingRequest();
+		BeanUtils.copyProperties(slotRequestDto, parkingRequest);
+		parkingRequest.setStatus("pending");
+		return null;
 	}
 }

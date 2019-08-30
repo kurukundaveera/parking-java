@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hcl.parking.dto.LoginDetailsDto;
 import com.hcl.parking.dto.LoginDto;
+import com.hcl.parking.dto.SlotDetailsDto;
+import com.hcl.parking.dto.SlotRequestDto;
 import com.hcl.parking.dto.UserDetailsDto;
 import com.hcl.parking.dto.UserDto;
 import com.hcl.parking.service.UserService;
@@ -38,5 +40,11 @@ public class UserController {
 		LOGGER.debug("PurchasePolicyController login()");
 		LoginDetailsDto loginDetailsDto =userService.login(loginDto);
 		return new ResponseEntity<>(loginDetailsDto,HttpStatus.OK);
+	}
+	@PostMapping("/request")
+	public ResponseEntity<SlotDetailsDto> slotRequest(@RequestBody SlotRequestDto slotRequestDto) {
+		LOGGER.debug("PurchasePolicyController slotRequest()");
+		SlotDetailsDto slotDetailsDto =userService.slotRequest(slotRequestDto);
+		return new ResponseEntity<>(slotDetailsDto,HttpStatus.OK);
 	}
 }
